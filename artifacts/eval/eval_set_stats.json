@@ -1,0 +1,13 @@
+{
+ "questions_total": 2593,
+ "annotations_total": 2675,
+ "drop_unanswerable": 281,
+ "drop_empty_evidence": 86,
+ "drop_float_selected": 327,
+ "drop_unlocatable_evidence": 13,
+ "annotations_kept": 1968,
+ "questions_kept": 1915,
+ "questions_multi_annotator": 53,
+ "duplicate_paragraphs_in_papers": 478,
+ "questions_in_agentic_subset": 155
+}

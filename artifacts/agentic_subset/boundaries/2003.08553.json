@@ -1,0 +1,26 @@
+{
+ "paper_id": "2003.08553",
+ "title": "QnAMaker: Data to Bot in 2 Minutes",
+ "num_sentences": 117,
+ "num_tokens": 2792,
+ "boundaries": [
+  4,
+  6,
+  14,
+  33,
+  49,
+  56,
+  57,
+  69,
+  77,
+  80,
+  86,
+  96,
+  103,
+  107,
+  111
+ ],
+ "llm_calls": 2,
+ "llm_failed_windows": 0,
+ "latency_seconds": 41.0
+}

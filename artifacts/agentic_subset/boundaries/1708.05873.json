@@ -1,0 +1,32 @@
+{
+ "paper_id": "1708.05873",
+ "title": "What Drives the International Development Agenda? An NLP Analysis of the United Nations General Debate 1970-2016",
+ "num_sentences": 165,
+ "num_tokens": 4141,
+ "boundaries": [
+  15,
+  21,
+  39,
+  47,
+  49,
+  59,
+  64,
+  76,
+  89,
+  99,
+  100,
+  105,
+  106,
+  116,
+  118,
+  123,
+  138,
+  146,
+  151,
+  157,
+  160
+ ],
+ "llm_calls": 3,
+ "llm_failed_windows": 0,
+ "latency_seconds": 56.87
+}

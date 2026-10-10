@@ -1,0 +1,31 @@
+{
+ "paper_id": "1909.00694",
+ "title": "Minimally Supervised Learning of Affective Events Using Discourse Relations",
+ "num_sentences": 171,
+ "num_tokens": 4142,
+ "boundaries": [
+  8,
+  19,
+  21,
+  38,
+  44,
+  49,
+  51,
+  55,
+  66,
+  79,
+  87,
+  101,
+  112,
+  113,
+  118,
+  127,
+  139,
+  146,
+  159,
+  169
+ ],
+ "llm_calls": 3,
+ "llm_failed_windows": 0,
+ "latency_seconds": 54.35
+}

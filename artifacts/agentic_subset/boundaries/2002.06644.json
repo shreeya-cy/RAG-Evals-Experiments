@@ -1,0 +1,30 @@
+{
+ "paper_id": "2002.06644",
+ "title": "Towards Detection of Subjective Bias using Contextualized Word Embeddings",
+ "num_sentences": 62,
+ "num_tokens": 1896,
+ "boundaries": [
+  4,
+  7,
+  10,
+  14,
+  16,
+  19,
+  20,
+  23,
+  24,
+  29,
+  34,
+  35,
+  38,
+  40,
+  47,
+  48,
+  53,
+  55,
+  60
+ ],
+ "llm_calls": 2,
+ "llm_failed_windows": 0,
+ "latency_seconds": 28.12
+}

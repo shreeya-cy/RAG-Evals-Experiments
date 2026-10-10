@@ -1,0 +1,26 @@
+{
+ "paper_id": "1911.03310",
+ "title": "How Language-Neutral is Multilingual BERT?",
+ "num_sentences": 104,
+ "num_tokens": 2931,
+ "boundaries": [
+  4,
+  9,
+  16,
+  28,
+  34,
+  44,
+  49,
+  50,
+  51,
+  56,
+  69,
+  78,
+  85,
+  96,
+  102
+ ],
+ "llm_calls": 2,
+ "llm_failed_windows": 0,
+ "latency_seconds": 37.09
+}

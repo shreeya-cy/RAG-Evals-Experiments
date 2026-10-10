@@ -1,0 +1,23 @@
+{
+ "paper_id": "1810.04528",
+ "title": "Is there Gender bias and stereotype in Portuguese Word Embeddings?",
+ "num_sentences": 82,
+ "num_tokens": 2280,
+ "boundaries": [
+  11,
+  17,
+  32,
+  49,
+  51,
+  55,
+  58,
+  60,
+  68,
+  73,
+  79,
+  80
+ ],
+ "llm_calls": 2,
+ "llm_failed_windows": 0,
+ "latency_seconds": 29.96
+}

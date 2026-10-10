@@ -1,0 +1,28 @@
+{
+ "paper_id": "2002.02224",
+ "title": "Citation Data of Czech Apex Courts",
+ "num_sentences": 150,
+ "num_tokens": 3753,
+ "boundaries": [
+  4,
+  14,
+  31,
+  46,
+  55,
+  62,
+  71,
+  80,
+  89,
+  98,
+  107,
+  109,
+  114,
+  116,
+  120,
+  132,
+  142
+ ],
+ "llm_calls": 3,
+ "llm_failed_windows": 0,
+ "latency_seconds": 55.0
+}

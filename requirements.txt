@@ -1,0 +1,8 @@
+datasets<4
+sentence-transformers
+qdrant-client
+python-dotenv
+tqdm
+langchain-text-splitters
+nltk
+requests

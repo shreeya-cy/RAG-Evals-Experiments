@@ -1,0 +1,25 @@
+{
+ "paper_id": "1910.03042",
+ "title": "Gunrock: A Social Bot for Complex and Engaging Long Conversations",
+ "num_sentences": 116,
+ "num_tokens": 3653,
+ "boundaries": [
+  3,
+  9,
+  19,
+  38,
+  51,
+  54,
+  55,
+  66,
+  79,
+  88,
+  90,
+  95,
+  103,
+  114
+ ],
+ "llm_calls": 3,
+ "llm_failed_windows": 0,
+ "latency_seconds": 46.81
+}

@@ -1,0 +1,30 @@
+{
+ "paper_id": "1907.05664",
+ "title": "Saliency Maps Generation for Automatic Text Summarization",
+ "num_sentences": 124,
+ "num_tokens": 3834,
+ "boundaries": [
+  5,
+  9,
+  18,
+  28,
+  39,
+  49,
+  54,
+  55,
+  57,
+  66,
+  78,
+  89,
+  93,
+  95,
+  98,
+  103,
+  109,
+  111,
+  120
+ ],
+ "llm_calls": 3,
+ "llm_failed_windows": 0,
+ "latency_seconds": 49.28
+}

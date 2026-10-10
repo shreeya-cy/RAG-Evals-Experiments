@@ -1,0 +1,22 @@
+{
+ "paper_id": "1909.11189",
+ "title": "Diachronic Topics in New High German Poetry",
+ "num_sentences": 67,
+ "num_tokens": 1854,
+ "boundaries": [
+  3,
+  11,
+  20,
+  33,
+  43,
+  52,
+  54,
+  56,
+  59,
+  64,
+  65
+ ],
+ "llm_calls": 2,
+ "llm_failed_windows": 0,
+ "latency_seconds": 25.7
+}

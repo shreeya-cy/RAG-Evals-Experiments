@@ -1,0 +1,17 @@
+{
+ "paper_id": "1904.09678",
+ "title": "UniSent: Universal Adaptable Sentiment Lexica for 1000+ Languages",
+ "num_sentences": 43,
+ "num_tokens": 1207,
+ "boundaries": [
+  10,
+  14,
+  29,
+  36,
+  38,
+  41
+ ],
+ "llm_calls": 1,
+ "llm_failed_windows": 0,
+ "latency_seconds": 15.03
+}

@@ -1,0 +1,21 @@
+{
+ "paper_id": "2003.12218",
+ "title": "Comprehensive Named Entity Recognition on CORD-19 with Distant or Weak Supervision",
+ "num_sentences": 90,
+ "num_tokens": 2375,
+ "boundaries": [
+  7,
+  13,
+  32,
+  57,
+  58,
+  60,
+  65,
+  71,
+  79,
+  83
+ ],
+ "llm_calls": 2,
+ "llm_failed_windows": 0,
+ "latency_seconds": 31.38
+}

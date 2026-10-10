@@ -1,0 +1,32 @@
+{
+ "paper_id": "1909.09491",
+ "title": "A simple discriminative training method for machine translation with large-scale features",
+ "num_sentences": 105,
+ "num_tokens": 3521,
+ "boundaries": [
+  1,
+  2,
+  9,
+  11,
+  13,
+  21,
+  26,
+  30,
+  36,
+  37,
+  39,
+  44,
+  52,
+  66,
+  78,
+  81,
+  83,
+  88,
+  93,
+  96,
+  102
+ ],
+ "llm_calls": 3,
+ "llm_failed_windows": 0,
+ "latency_seconds": 45.73
+}

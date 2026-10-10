@@ -1,0 +1,33 @@
+{
+ "paper_id": "1912.13109",
+ "title": "\"Hinglish\"Language -- Modeling a Messy Code-Mixed Language",
+ "num_sentences": 133,
+ "num_tokens": 3367,
+ "boundaries": [
+  2,
+  9,
+  16,
+  30,
+  38,
+  47,
+  57,
+  60,
+  62,
+  66,
+  69,
+  78,
+  80,
+  88,
+  93,
+  101,
+  104,
+  107,
+  111,
+  116,
+  119,
+  120
+ ],
+ "llm_calls": 3,
+ "llm_failed_windows": 0,
+ "latency_seconds": 49.55
+}

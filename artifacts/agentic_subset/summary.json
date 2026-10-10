@@ -1,0 +1,13 @@
+{
+ "model": "qwen2.5:7b",
+ "num_papers": 50,
+ "window_tokens": 1500,
+ "total_latency_seconds": 4376.9,
+ "mean_latency_seconds": 87.5,
+ "max_latency_seconds": 811.99,
+ "total_llm_calls": 219,
+ "total_failed_windows": 1,
+ "total_boundaries": 1609,
+ "total_sentences": 9693,
+ "total_tokens": 274462
+}

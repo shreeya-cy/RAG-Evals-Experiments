@@ -1,0 +1,62 @@
+{
+ "model": "BAAI/bge-small-en-v1.5",
+ "query_prefix": "Represent this sentence for searching relevant passages: ",
+ "top_k": 50,
+ "top_k_children": 100,
+ "token_budget": 1024,
+ "search": "exact, filtered by paper_id",
+ "budget_rule": "rank order; the chunk that crosses the budget is truncated to fit",
+ "num_questions": 1915,
+ "strategies": {
+  "fixed": {
+   "collection": "qasper_train_bge_small_256",
+   "num_questions": 1915,
+   "search_seconds": 39.4,
+   "checks": {
+    "fixed_tokens_differ_from_paper_text": 0,
+    "fixed_text_mismatch": 311,
+    "recursive_text_mismatch": 0
+   }
+  },
+  "paragraph": {
+   "collection": "qasper_train_bge_small_paragraph",
+   "num_questions": 1915,
+   "search_seconds": 34.6,
+   "checks": {
+    "fixed_tokens_differ_from_paper_text": 0,
+    "fixed_text_mismatch": 0,
+    "recursive_text_mismatch": 0
+   }
+  },
+  "recursive": {
+   "collection": "qasper_train_bge_small_recursive_256",
+   "num_questions": 1915,
+   "search_seconds": 35.7,
+   "checks": {
+    "fixed_tokens_differ_from_paper_text": 0,
+    "fixed_text_mismatch": 0,
+    "recursive_text_mismatch": 0
+   }
+  },
+  "hierarchical": {
+   "collection": "qasper_train_bge_small_hierarchical",
+   "num_questions": 1915,
+   "search_seconds": 30.9,
+   "checks": {
+    "fixed_tokens_differ_from_paper_text": 0,
+    "fixed_text_mismatch": 0,
+    "recursive_text_mismatch": 0
+   }
+  },
+  "agentic_subset": {
+   "collection": "qasper_train_bge_small_agentic_subset",
+   "num_questions": 155,
+   "search_seconds": 3.2,
+   "checks": {
+    "fixed_tokens_differ_from_paper_text": 0,
+    "fixed_text_mismatch": 0,
+    "recursive_text_mismatch": 0
+   }
+  }
+ }
+}

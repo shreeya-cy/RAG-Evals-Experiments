@@ -1,0 +1,19 @@
+{
+ "paper_id": "1909.12140",
+ "title": "DisSim: A Discourse-Aware Syntactic Text Simplification Frameworkfor English and German",
+ "num_sentences": 45,
+ "num_tokens": 1545,
+ "boundaries": [
+  8,
+  10,
+  16,
+  26,
+  35,
+  36,
+  41,
+  42
+ ],
+ "llm_calls": 2,
+ "llm_failed_windows": 0,
+ "latency_seconds": 20.9
+}
