@@ -5,3 +5,4 @@ __pycache__/
 .cache/
 artifacts/retrieval/*.jsonl
 artifacts/retrieval_qwen3/*.jsonl
+artifacts/retrieval_openai/*.jsonl

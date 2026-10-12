@@ -1,0 +1,62 @@
+{
+ "model": "text-embedding-3-small",
+ "query_prefix": "",
+ "top_k": 50,
+ "top_k_children": 100,
+ "token_budget": 1024,
+ "search": "approximate (Pinecone serverless), filtered by paper_id",
+ "budget_rule": "rank order; the chunk that crosses the budget is truncated to fit",
+ "num_questions": 1915,
+ "strategies": {
+  "fixed": {
+   "collection": "fixed-256",
+   "num_questions": 1915,
+   "search_seconds": 58.6,
+   "checks": {
+    "fixed_tokens_differ_from_paper_text": 0,
+    "fixed_text_mismatch": 309,
+    "recursive_text_mismatch": 0
+   }
+  },
+  "paragraph": {
+   "collection": "paragraph",
+   "num_questions": 1915,
+   "search_seconds": 59.3,
+   "checks": {
+    "fixed_tokens_differ_from_paper_text": 0,
+    "fixed_text_mismatch": 0,
+    "recursive_text_mismatch": 0
+   }
+  },
+  "recursive": {
+   "collection": "recursive-256",
+   "num_questions": 1915,
+   "search_seconds": 59.9,
+   "checks": {
+    "fixed_tokens_differ_from_paper_text": 0,
+    "fixed_text_mismatch": 0,
+    "recursive_text_mismatch": 0
+   }
+  },
+  "hierarchical": {
+   "collection": "hierarchical",
+   "num_questions": 1915,
+   "search_seconds": 57.4,
+   "checks": {
+    "fixed_tokens_differ_from_paper_text": 0,
+    "fixed_text_mismatch": 0,
+    "recursive_text_mismatch": 0
+   }
+  },
+  "agentic_subset": {
+   "collection": "agentic-subset",
+   "num_questions": 155,
+   "search_seconds": 6.3,
+   "checks": {
+    "fixed_tokens_differ_from_paper_text": 0,
+    "fixed_text_mismatch": 0,
+    "recursive_text_mismatch": 0
+   }
+  }
+ }
+}

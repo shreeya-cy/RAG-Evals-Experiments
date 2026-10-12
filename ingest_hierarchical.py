@@ -9,9 +9,7 @@ from tqdm import tqdm
 
 import config
 from embedding import add_model_arg, chunk_tokenizer, embed, load_embedder
-from qdrant_setup import get_client, setup_collection, upsert_with_retry
-
-UPSERT_BATCH = 128
+from vector_store import open_store
 
 
 def build_paper_text(paper: dict) -> tuple[str, list[dict]]:
@@ -142,9 +140,7 @@ def main() -> None:
     args = parser.parse_args()
 
     model, spec = load_embedder(args.model)
-    name = spec["collections"]["hierarchical"]
-    client = get_client()
-    setup_collection(client, name=name, recreate=args.recreate, vector_size=spec["dim"])
+    store = open_store(spec, "hierarchical", recreate=args.recreate)
 
     nltk.download("punkt_tab", quiet=True)
     sent_tok = PunktTokenizer("english")
@@ -174,12 +170,11 @@ def main() -> None:
             )
             for i, (child, vec) in enumerate(zip(children, vectors))
         ]
-        for i in range(0, len(points), UPSERT_BATCH):
-            upsert_with_retry(client, name, points[i : i + UPSERT_BATCH])
+        store.upsert(points)
         total += len(points)
 
     print(f"Upserted {total} children from {len(dataset)} papers")
-    print("Collection count:", client.count(name, exact=True).count)
+    print("Collection count:", store.count(expected=total))
 
 
 if __name__ == "__main__":

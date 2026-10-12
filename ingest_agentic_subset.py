@@ -12,9 +12,7 @@ from tqdm import tqdm
 import config
 from embedding import add_model_arg, chunk_tokenizer, embed, load_embedder
 from agentic_subset_boundaries import get_sentences
-from qdrant_setup import get_client, setup_collection, upsert_with_retry
-
-UPSERT_BATCH = 128
+from vector_store import open_store
 
 
 def build_chunks(paper_text: str, sentences: list[dict], boundaries: list[int]) -> list[dict]:
@@ -68,9 +66,7 @@ def main() -> None:
         raise SystemExit("No recorded boundaries; run agentic_subset_boundaries.py first")
 
     model, spec = load_embedder(args.model)
-    name = spec["collections"]["agentic_subset"]
-    client = get_client()
-    setup_collection(client, name=name, recreate=args.recreate, vector_size=spec["dim"])
+    store = open_store(spec, "agentic_subset", recreate=args.recreate)
 
     nltk.download("punkt_tab", quiet=True)
     sent_tok = PunktTokenizer("english")
@@ -95,12 +91,11 @@ def main() -> None:
             )
             for i, (chunk, vec) in enumerate(zip(chunks, vectors))
         ]
-        for i in range(0, len(points), UPSERT_BATCH):
-            upsert_with_retry(client, name, points[i : i + UPSERT_BATCH])
+        store.upsert(points)
         total += len(points)
 
     print(f"Upserted {total} chunks from {len(dataset)} papers")
-    print("Collection count:", client.count(name, exact=True).count)
+    print("Collection count:", store.count(expected=total))
 
 
 if __name__ == "__main__":

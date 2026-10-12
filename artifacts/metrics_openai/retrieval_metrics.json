@@ -1,0 +1,162 @@
+{
+ "token_budget": 1024,
+ "paragraph_coverage_threshold": 0.8,
+ "definitions": {
+  "evidence_recall@B": "gold-evidence characters covered by in-budget retrieved text / total gold characters, per annotator, max over annotators, mean over questions",
+  "full_coverage_rate@B": "share of questions where every gold paragraph of at least one annotator is >= 80% covered",
+  "mrr": "mean of 1/rank of the first in-budget unit overlapping any gold paragraph by >= 1 character (0 if none)",
+  "tokens_to_first_hit": "tokens of the in-budget units ranked before the first overlapping unit (excludes that unit); mean/median over questions with a hit; the misses_as_budget variant counts a miss as the full budget"
+ },
+ "strategies": {
+  "fixed": {
+   "collection": "fixed-256",
+   "all_questions": {
+    "num_questions": 1915,
+    "evidence_recall@B": 0.5647,
+    "full_coverage_rate@B": 0.4366,
+    "mrr": 0.5054,
+    "hit_rate": 0.7102,
+    "tokens_to_first_hit_mean": 206.0,
+    "tokens_to_first_hit_median": 0.0,
+    "tokens_to_first_hit_misses_as_budget_mean": 443.1,
+    "secondary_union": {
+     "evidence_recall_union@B": 0.5629,
+     "full_coverage_rate_union@B": 0.4334
+    },
+    "mean_units_in_budget": 4.21
+   },
+   "agentic_subset_questions": {
+    "num_questions": 155,
+    "evidence_recall@B": 0.5191,
+    "full_coverage_rate@B": 0.4,
+    "mrr": 0.4415,
+    "hit_rate": 0.6516,
+    "tokens_to_first_hit_mean": 242.6,
+    "tokens_to_first_hit_median": 255,
+    "tokens_to_first_hit_misses_as_budget_mean": 514.8,
+    "secondary_union": {
+     "evidence_recall_union@B": 0.5056,
+     "full_coverage_rate_union@B": 0.3806
+    },
+    "mean_units_in_budget": 4.18
+   }
+  },
+  "paragraph": {
+   "collection": "paragraph",
+   "all_questions": {
+    "num_questions": 1915,
+    "evidence_recall@B": 0.6648,
+    "full_coverage_rate@B": 0.5676,
+    "mrr": 0.4344,
+    "hit_rate": 0.7697,
+    "tokens_to_first_hit_mean": 239.3,
+    "tokens_to_first_hit_median": 128.0,
+    "tokens_to_first_hit_misses_as_budget_mean": 420.0,
+    "secondary_union": {
+     "evidence_recall_union@B": 0.6626,
+     "full_coverage_rate_union@B": 0.564
+    },
+    "mean_units_in_budget": 8.73
+   },
+   "agentic_subset_questions": {
+    "num_questions": 155,
+    "evidence_recall@B": 0.6705,
+    "full_coverage_rate@B": 0.5484,
+    "mrr": 0.4272,
+    "hit_rate": 0.8,
+    "tokens_to_first_hit_mean": 268.5,
+    "tokens_to_first_hit_median": 158.5,
+    "tokens_to_first_hit_misses_as_budget_mean": 419.6,
+    "secondary_union": {
+     "evidence_recall_union@B": 0.6509,
+     "full_coverage_rate_union@B": 0.5161
+    },
+    "mean_units_in_budget": 8.99
+   }
+  },
+  "recursive": {
+   "collection": "recursive-256",
+   "all_questions": {
+    "num_questions": 1915,
+    "evidence_recall@B": 0.6424,
+    "full_coverage_rate@B": 0.553,
+    "mrr": 0.4803,
+    "hit_rate": 0.7389,
+    "tokens_to_first_hit_mean": 232.7,
+    "tokens_to_first_hit_median": 133,
+    "tokens_to_first_hit_misses_as_budget_mean": 439.3,
+    "secondary_union": {
+     "evidence_recall_union@B": 0.6406,
+     "full_coverage_rate_union@B": 0.5488
+    },
+    "mean_units_in_budget": 5.8
+   },
+   "agentic_subset_questions": {
+    "num_questions": 155,
+    "evidence_recall@B": 0.611,
+    "full_coverage_rate@B": 0.5161,
+    "mrr": 0.4917,
+    "hit_rate": 0.7161,
+    "tokens_to_first_hit_mean": 215.6,
+    "tokens_to_first_hit_median": 0,
+    "tokens_to_first_hit_misses_as_budget_mean": 445.1,
+    "secondary_union": {
+     "evidence_recall_union@B": 0.5973,
+     "full_coverage_rate_union@B": 0.4839
+    },
+    "mean_units_in_budget": 5.79
+   }
+  },
+  "hierarchical": {
+   "collection": "hierarchical",
+   "all_questions": {
+    "num_questions": 1915,
+    "evidence_recall@B": 0.6475,
+    "full_coverage_rate@B": 0.5535,
+    "mrr": 0.4069,
+    "hit_rate": 0.7483,
+    "tokens_to_first_hit_mean": 274.3,
+    "tokens_to_first_hit_median": 185,
+    "tokens_to_first_hit_misses_as_budget_mean": 463.0,
+    "secondary_union": {
+     "evidence_recall_union@B": 0.6453,
+     "full_coverage_rate_union@B": 0.5488
+    },
+    "mean_units_in_budget": 7.96
+   },
+   "agentic_subset_questions": {
+    "num_questions": 155,
+    "evidence_recall@B": 0.6717,
+    "full_coverage_rate@B": 0.5677,
+    "mrr": 0.4431,
+    "hit_rate": 0.7871,
+    "tokens_to_first_hit_mean": 260.1,
+    "tokens_to_first_hit_median": 197.5,
+    "tokens_to_first_hit_misses_as_budget_mean": 422.8,
+    "secondary_union": {
+     "evidence_recall_union@B": 0.6514,
+     "full_coverage_rate_union@B": 0.529
+    },
+    "mean_units_in_budget": 8.14
+   }
+  },
+  "agentic_subset": {
+   "collection": "agentic-subset",
+   "all_questions": {
+    "num_questions": 155,
+    "evidence_recall@B": 0.5477,
+    "full_coverage_rate@B": 0.3806,
+    "mrr": 0.451,
+    "hit_rate": 0.7548,
+    "tokens_to_first_hit_mean": 239.4,
+    "tokens_to_first_hit_median": 107,
+    "tokens_to_first_hit_misses_as_budget_mean": 431.8,
+    "secondary_union": {
+     "evidence_recall_union@B": 0.5184,
+     "full_coverage_rate_union@B": 0.3355
+    },
+    "mean_units_in_budget": 5.92
+   }
+  }
+ }
+}

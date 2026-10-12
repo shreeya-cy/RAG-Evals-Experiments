@@ -6,6 +6,7 @@ load_dotenv()
 
 QDRANT_URL = os.environ.get("QDRANT_URL")
 QDRANT_API_KEY = os.environ.get("QDRANT_API_KEY")
+PINECONE_API_KEY = os.environ.get("PINECONE_API_KEY")
 
 COLLECTION_NAME = "qasper_train_bge_small_256"
 PARAGRAPH_COLLECTION_NAME = "qasper_train_bge_small_paragraph"
@@ -84,4 +85,27 @@ EMBEDDING_MODELS = {
             "agentic_subset": "qasper_train_qwen3_06b_agentic_subset",
         },
     },
+    "openai": {
+        "name": "text-embedding-3-small",
+        "provider": "openai",
+        "store": "pinecone",
+        "index": "qasper-te3-small-1024",
+        "dim": 1024,  # the API shortens the default 1536 vector; keeps the free Pinecone plan comfortable
+        "batch_size": 256,
+        "retrieval_dir": "artifacts/retrieval_openai",
+        "metrics_dir": "artifacts/metrics_openai",
+        "query_prefix": "",
+        "collections": {  # Pinecone namespaces, one per chunking strategy
+            "fixed": "fixed-256",
+            "paragraph": "paragraph",
+            "recursive": "recursive-256",
+            "hierarchical": "hierarchical",
+            "agentic_subset": "agentic-subset",
+        },
+    },
 }
+
+# Pinecone free plan: 2 GB storage, 2M write units/month, 1M read units/month. Stop well short.
+PINECONE_WU_CAP = 1_800_000
+PINECONE_LEDGER = "artifacts/pinecone_write_units.json"
+PINECONE_DROP_FIELDS = ("parent_text",)  # large and never read back by retrieval

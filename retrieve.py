@@ -17,16 +17,14 @@ from pathlib import Path
 
 from datasets import load_dataset
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from qdrant_client import models
-from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 
 import config
-from embedding import add_model_arg, chunk_tokenizer
+from embedding import add_model_arg, chunk_tokenizer, embed, load_embedder
 from ingest_fixed_size import build_document as fixed_document
 from ingest_hierarchical import build_paper_text
 from ingest_recursive import build_document as recursive_document
-from qdrant_setup import get_client
+from vector_store import open_store
 
 STRATEGIES = {
     "fixed": config.COLLECTION_NAME,
@@ -117,21 +115,6 @@ def fill_budget(entries: list[dict], paper: Paper) -> None:
         e["cum_tokens"] = used
 
 
-def search(client, collection, vector, paper_id, limit):
-    for attempt in range(5):
-        try:
-            return client.query_points(
-                collection, query=vector, limit=limit, with_payload=True,
-                query_filter=models.Filter(must=[models.FieldCondition(
-                    key="paper_id", match=models.MatchValue(value=paper_id))]),
-                search_params=models.SearchParams(exact=True),
-            ).points
-        except Exception:
-            if attempt == 4:
-                raise
-            time.sleep(2**attempt)
-
-
 def to_entries(strategy: str, hits, paper: Paper, checks: dict) -> list[dict]:
     entries = []
     if strategy == "hierarchical":
@@ -181,31 +164,29 @@ def main() -> None:
     out_dir = Path(spec["retrieval_dir"])
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    model = SentenceTransformer(spec["name"])
-    model.max_seq_length = 512
+    model, _ = load_embedder(args.model)
     # Chunk spans and token budgets are always measured with the bge tokenizer, for every model.
     tokenizer = chunk_tokenizer()
-    vectors = model.encode([spec["query_prefix"] + i["question"] for i in items],
-                           batch_size=spec["batch_size"], normalize_embeddings=True, show_progress_bar=False)
+    vectors = embed(model, spec, [spec["query_prefix"] + i["question"] for i in items])
     dataset = load_dataset(config.DATASET_NAME, split=config.DATASET_SPLIT, trust_remote_code=True)
     records = {p["id"]: p for p in dataset}
     papers: dict[str, Paper] = {}
-    client = get_client()
     manifest = {"model": spec["name"], "query_prefix": spec["query_prefix"],
                 "top_k": config.TOP_K, "top_k_children": config.TOP_K_CHILDREN,
-                "token_budget": config.TOKEN_BUDGET, "search": "exact, filtered by paper_id",
+                "token_budget": config.TOKEN_BUDGET, "search": ("approximate (Pinecone serverless)" if spec.get("store") == "pinecone" else "exact") + ", filtered by paper_id",
                 "budget_rule": "rank order; the chunk that crosses the budget is truncated to fit",
                 "num_questions": len(items), "strategies": {}}
 
     for strategy in args.strategies:
         collection = collections[strategy]
+        store = open_store(spec, strategy, setup=False)
         rows = [(i, v) for i, v in zip(items, vectors)
                 if strategy != "agentic_subset" or i["in_agentic_subset"]]
         k = config.TOP_K_CHILDREN if strategy == "hierarchical" else config.TOP_K
         start = time.perf_counter()
         with ThreadPoolExecutor(8) as pool:
             all_hits = list(tqdm(pool.map(
-                lambda r: search(client, collection, r[1].tolist(), r[0]["paper_id"], k), rows),
+                lambda r: store.search(r[1].tolist(), r[0]["paper_id"], k), rows),
                 total=len(rows), desc=f"search {strategy}"))
         search_seconds = time.perf_counter() - start
 
