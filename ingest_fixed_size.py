@@ -3,10 +3,10 @@ import uuid
 
 from datasets import load_dataset
 from qdrant_client import models
-from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 
 import config
+from embedding import add_model_arg, chunk_tokenizer, embed, load_embedder
 from qdrant_setup import get_client, setup_collection, upsert_with_retry
 
 UPSERT_BATCH = 128
@@ -41,14 +41,15 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--limit", type=int, default=None, help="only first N papers")
     parser.add_argument("--recreate", action="store_true")
+    add_model_arg(parser)
     args = parser.parse_args()
 
+    model, spec = load_embedder(args.model)
+    name = spec["collections"]["fixed"]
     client = get_client()
-    setup_collection(client, recreate=args.recreate)
+    setup_collection(client, name=name, recreate=args.recreate, vector_size=spec["dim"])
 
-    model = SentenceTransformer(config.EMBEDDING_MODEL)
-    tokenizer = model.tokenizer
-    model.max_seq_length = 512
+    tokenizer = chunk_tokenizer()
 
     dataset = load_dataset(
         config.DATASET_NAME, split=config.DATASET_SPLIT, trust_remote_code=True
@@ -61,9 +62,7 @@ def main() -> None:
         chunks = chunk_text(
             build_document(paper), tokenizer, config.CHUNK_SIZE, config.CHUNK_OVERLAP
         )
-        vectors = model.encode(
-            chunks, batch_size=64, normalize_embeddings=True, show_progress_bar=False
-        )
+        vectors = embed(model, spec, chunks)
         points = [
             models.PointStruct(
                 id=str(uuid.uuid5(uuid.NAMESPACE_URL, f"{paper['id']}:{i}")),
@@ -78,13 +77,11 @@ def main() -> None:
             for i, (chunk, vec) in enumerate(zip(chunks, vectors))
         ]
         for i in range(0, len(points), UPSERT_BATCH):
-            upsert_with_retry(
-                client, config.COLLECTION_NAME, points[i : i + UPSERT_BATCH]
-            )
+            upsert_with_retry(client, name, points[i : i + UPSERT_BATCH])
         total += len(points)
 
     print(f"Upserted {total} chunks from {len(dataset)} papers")
-    print("Collection count:", client.count(config.COLLECTION_NAME, exact=True).count)
+    print("Collection count:", client.count(name, exact=True).count)
 
 
 if __name__ == "__main__":

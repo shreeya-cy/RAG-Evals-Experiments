@@ -43,3 +43,45 @@ QUERY_PREFIX = "Represent this sentence for searching relevant passages: "
 
 METRICS_DIR = "artifacts/metrics"
 PARAGRAPH_COVERAGE_THRESHOLD = 0.8
+
+
+# Embedding models. Chunking always uses the bge tokenizer (CHUNK_TOKENIZER) so every model
+# embeds identical chunks; only the vectors differ.
+CHUNK_TOKENIZER = EMBEDDING_MODEL
+QWEN_EMBEDDING_MODEL = "Qwen/Qwen3-Embedding-0.6B"
+QWEN_QUERY_PROMPT = (
+    "Instruct: Given a question about a scientific paper, retrieve the passages that answer it\n"
+    "Query: "
+)
+EMBEDDING_MODELS = {
+    "bge": {
+        "name": EMBEDDING_MODEL,
+        "dim": VECTOR_SIZE,
+        "batch_size": 64,
+        "retrieval_dir": RETRIEVAL_DIR,
+        "metrics_dir": METRICS_DIR,
+        "query_prefix": QUERY_PREFIX,
+        "collections": {
+            "fixed": COLLECTION_NAME,
+            "paragraph": PARAGRAPH_COLLECTION_NAME,
+            "recursive": RECURSIVE_COLLECTION_NAME,
+            "hierarchical": HIERARCHICAL_COLLECTION_NAME,
+            "agentic_subset": AGENTIC_SUBSET_COLLECTION_NAME,
+        },
+    },
+    "qwen": {
+        "name": QWEN_EMBEDDING_MODEL,
+        "dim": 1024,
+        "batch_size": 16,
+        "retrieval_dir": "artifacts/retrieval_qwen3",
+        "metrics_dir": "artifacts/metrics_qwen3",
+        "query_prefix": QWEN_QUERY_PROMPT,
+        "collections": {
+            "fixed": "qasper_train_qwen3_06b_256",
+            "paragraph": "qasper_train_qwen3_06b_paragraph",
+            "recursive": "qasper_train_qwen3_06b_recursive_256",
+            "hierarchical": "qasper_train_qwen3_06b_hierarchical",
+            "agentic_subset": "qasper_train_qwen3_06b_agentic_subset",
+        },
+    },
+}

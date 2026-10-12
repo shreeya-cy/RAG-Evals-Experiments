@@ -22,6 +22,7 @@ from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 
 import config
+from embedding import add_model_arg, chunk_tokenizer
 from ingest_fixed_size import build_document as fixed_document
 from ingest_hierarchical import build_paper_text
 from ingest_recursive import build_document as recursive_document
@@ -169,29 +170,35 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--limit", type=int, default=None, help="only first N questions")
     parser.add_argument("--strategies", nargs="+", default=list(STRATEGIES))
+    add_model_arg(parser)
     args = parser.parse_args()
+    spec = config.EMBEDDING_MODELS[args.model]
+    collections = spec["collections"]
 
     items = json.loads((Path(config.EVAL_DIR) / "eval_set.json").read_text())
     if args.limit:
         items = items[: args.limit]
-    out_dir = Path(config.RETRIEVAL_DIR)
+    out_dir = Path(spec["retrieval_dir"])
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    model = SentenceTransformer(config.EMBEDDING_MODEL)
-    vectors = model.encode([config.QUERY_PREFIX + i["question"] for i in items],
-                           batch_size=64, normalize_embeddings=True, show_progress_bar=False)
+    model = SentenceTransformer(spec["name"])
+    model.max_seq_length = 512
+    # Chunk spans and token budgets are always measured with the bge tokenizer, for every model.
+    tokenizer = chunk_tokenizer()
+    vectors = model.encode([spec["query_prefix"] + i["question"] for i in items],
+                           batch_size=spec["batch_size"], normalize_embeddings=True, show_progress_bar=False)
     dataset = load_dataset(config.DATASET_NAME, split=config.DATASET_SPLIT, trust_remote_code=True)
     records = {p["id"]: p for p in dataset}
     papers: dict[str, Paper] = {}
     client = get_client()
-    manifest = {"model": config.EMBEDDING_MODEL, "query_prefix": config.QUERY_PREFIX,
+    manifest = {"model": spec["name"], "query_prefix": spec["query_prefix"],
                 "top_k": config.TOP_K, "top_k_children": config.TOP_K_CHILDREN,
                 "token_budget": config.TOKEN_BUDGET, "search": "exact, filtered by paper_id",
                 "budget_rule": "rank order; the chunk that crosses the budget is truncated to fit",
                 "num_questions": len(items), "strategies": {}}
 
     for strategy in args.strategies:
-        collection = STRATEGIES[strategy]
+        collection = collections[strategy]
         rows = [(i, v) for i, v in zip(items, vectors)
                 if strategy != "agentic_subset" or i["in_agentic_subset"]]
         k = config.TOP_K_CHILDREN if strategy == "hierarchical" else config.TOP_K
@@ -208,7 +215,7 @@ def main() -> None:
             for (item, _), hits in zip(rows, all_hits):
                 pid = item["paper_id"]
                 if pid not in papers:
-                    papers[pid] = Paper(records[pid], model.tokenizer)
+                    papers[pid] = Paper(records[pid], tokenizer)
                 entries = to_entries(strategy, hits, papers[pid], checks)
                 f.write(json.dumps({"question_id": item["question_id"], "paper_id": pid,
                                     "num_retrieved": len(hits), "retrieved": entries}) + "\n")

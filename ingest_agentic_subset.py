@@ -7,10 +7,10 @@ import nltk
 from datasets import load_dataset
 from nltk.tokenize import PunktTokenizer
 from qdrant_client import models
-from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 
 import config
+from embedding import add_model_arg, chunk_tokenizer, embed, load_embedder
 from agentic_subset_boundaries import get_sentences
 from qdrant_setup import get_client, setup_collection, upsert_with_retry
 
@@ -59,6 +59,7 @@ def build_chunks(paper_text: str, sentences: list[dict], boundaries: list[int]) 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--recreate", action="store_true")
+    add_model_arg(parser)
     args = parser.parse_args()
 
     boundary_dir = Path(config.AGENTIC_ARTIFACTS_DIR) / "boundaries"
@@ -66,14 +67,14 @@ def main() -> None:
     if not records:
         raise SystemExit("No recorded boundaries; run agentic_subset_boundaries.py first")
 
-    name = config.AGENTIC_SUBSET_COLLECTION_NAME
+    model, spec = load_embedder(args.model)
+    name = spec["collections"]["agentic_subset"]
     client = get_client()
-    setup_collection(client, name=name, recreate=args.recreate)
+    setup_collection(client, name=name, recreate=args.recreate, vector_size=spec["dim"])
 
     nltk.download("punkt_tab", quiet=True)
     sent_tok = PunktTokenizer("english")
-    model = SentenceTransformer(config.EMBEDDING_MODEL)
-    model.max_seq_length = 512
+    tokenizer = chunk_tokenizer()
 
     dataset = load_dataset(
         config.DATASET_NAME, split=config.DATASET_SPLIT, trust_remote_code=True
@@ -81,16 +82,11 @@ def main() -> None:
 
     all_chunks, total = 0, 0
     for paper in tqdm(dataset, desc="papers"):
-        paper_text, sentences = get_sentences(paper, sent_tok, model.tokenizer)
+        paper_text, sentences = get_sentences(paper, sent_tok, tokenizer)
         record = records[paper["id"]]
         assert record["num_sentences"] == len(sentences), "sentence split changed since boundaries were recorded"
         chunks = build_chunks(paper_text, sentences, record["boundaries"])
-        vectors = model.encode(
-            [c["text"] for c in chunks],
-            batch_size=64,
-            normalize_embeddings=True,
-            show_progress_bar=False,
-        )
+        vectors = embed(model, spec, [c["text"] for c in chunks])
         points = [
             models.PointStruct(
                 id=str(uuid.uuid5(uuid.NAMESPACE_URL, f"agentic:{paper['id']}:{i}")),

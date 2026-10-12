@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 .cache/
 artifacts/retrieval/*.jsonl
+artifacts/retrieval_qwen3/*.jsonl

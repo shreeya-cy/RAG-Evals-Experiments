@@ -5,10 +5,10 @@ import nltk
 from datasets import load_dataset
 from nltk.tokenize import PunktTokenizer
 from qdrant_client import models
-from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 
 import config
+from embedding import add_model_arg, chunk_tokenizer, embed, load_embedder
 from qdrant_setup import get_client, setup_collection, upsert_with_retry
 
 UPSERT_BATCH = 128
@@ -138,17 +138,18 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--limit", type=int, default=None, help="only first N papers")
     parser.add_argument("--recreate", action="store_true")
+    add_model_arg(parser)
     args = parser.parse_args()
 
-    name = config.HIERARCHICAL_COLLECTION_NAME
+    model, spec = load_embedder(args.model)
+    name = spec["collections"]["hierarchical"]
     client = get_client()
-    setup_collection(client, name=name, recreate=args.recreate)
+    setup_collection(client, name=name, recreate=args.recreate, vector_size=spec["dim"])
 
     nltk.download("punkt_tab", quiet=True)
     sent_tok = PunktTokenizer("english")
 
-    model = SentenceTransformer(config.EMBEDDING_MODEL)
-    model.max_seq_length = 512
+    tokenizer = chunk_tokenizer()
 
     dataset = load_dataset(
         config.DATASET_NAME, split=config.DATASET_SPLIT, trust_remote_code=True
@@ -158,13 +159,8 @@ def main() -> None:
 
     total = 0
     for paper in tqdm(dataset, desc="papers"):
-        children = build_children(paper, sent_tok, model.tokenizer)
-        vectors = model.encode(
-            [c["text"] for c in children],
-            batch_size=64,
-            normalize_embeddings=True,
-            show_progress_bar=False,
-        )
+        children = build_children(paper, sent_tok, tokenizer)
+        vectors = embed(model, spec, [c["text"] for c in children])
         points = [
             models.PointStruct(
                 id=str(uuid.uuid5(uuid.NAMESPACE_URL, f"hier:{paper['id']}:{i}")),

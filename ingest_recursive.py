@@ -4,10 +4,10 @@ import uuid
 from datasets import load_dataset
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from qdrant_client import models
-from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 
 import config
+from embedding import add_model_arg, chunk_tokenizer, embed, load_embedder
 from qdrant_setup import get_client, setup_collection, upsert_with_retry
 
 UPSERT_BATCH = 128
@@ -28,19 +28,18 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--limit", type=int, default=None, help="only first N papers")
     parser.add_argument("--recreate", action="store_true")
+    add_model_arg(parser)
     args = parser.parse_args()
 
-    name = config.RECURSIVE_COLLECTION_NAME
+    model, spec = load_embedder(args.model)
+    name = spec["collections"]["recursive"]
     client = get_client()
-    setup_collection(client, name=name, recreate=args.recreate)
-
-    model = SentenceTransformer(config.EMBEDDING_MODEL)
-    model.max_seq_length = 512
+    setup_collection(client, name=name, recreate=args.recreate, vector_size=spec["dim"])
 
     # Chunk size/overlap are measured in bge tokens, as in the fixed-size strategy.
     # keep_separator="end" leaves the ". " at the end of a sentence, not the start of the next.
     splitter = RecursiveCharacterTextSplitter.from_huggingface_tokenizer(
-        model.tokenizer,
+        chunk_tokenizer(),
         chunk_size=config.CHUNK_SIZE,
         chunk_overlap=config.CHUNK_OVERLAP,
         separators=config.RECURSIVE_SEPARATORS,
@@ -56,9 +55,7 @@ def main() -> None:
     total = 0
     for paper in tqdm(dataset, desc="papers"):
         chunks = splitter.split_text(build_document(paper))
-        vectors = model.encode(
-            chunks, batch_size=64, normalize_embeddings=True, show_progress_bar=False
-        )
+        vectors = embed(model, spec, chunks)
         points = [
             models.PointStruct(
                 id=str(uuid.uuid5(uuid.NAMESPACE_URL, f"rec:{paper['id']}:{i}")),

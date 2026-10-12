@@ -1,0 +1,62 @@
+{
+ "model": "Qwen/Qwen3-Embedding-0.6B",
+ "query_prefix": "Instruct: Given a question about a scientific paper, retrieve the passages that answer it\nQuery: ",
+ "top_k": 50,
+ "top_k_children": 100,
+ "token_budget": 1024,
+ "search": "exact, filtered by paper_id",
+ "budget_rule": "rank order; the chunk that crosses the budget is truncated to fit",
+ "num_questions": 1915,
+ "strategies": {
+  "fixed": {
+   "collection": "qasper_train_qwen3_06b_256",
+   "num_questions": 1915,
+   "search_seconds": 42.6,
+   "checks": {
+    "fixed_tokens_differ_from_paper_text": 0,
+    "fixed_text_mismatch": 307,
+    "recursive_text_mismatch": 0
+   }
+  },
+  "paragraph": {
+   "collection": "qasper_train_qwen3_06b_paragraph",
+   "num_questions": 1915,
+   "search_seconds": 42.4,
+   "checks": {
+    "fixed_tokens_differ_from_paper_text": 0,
+    "fixed_text_mismatch": 0,
+    "recursive_text_mismatch": 0
+   }
+  },
+  "recursive": {
+   "collection": "qasper_train_qwen3_06b_recursive_256",
+   "num_questions": 1915,
+   "search_seconds": 42.5,
+   "checks": {
+    "fixed_tokens_differ_from_paper_text": 0,
+    "fixed_text_mismatch": 0,
+    "recursive_text_mismatch": 0
+   }
+  },
+  "hierarchical": {
+   "collection": "qasper_train_qwen3_06b_hierarchical",
+   "num_questions": 1915,
+   "search_seconds": 42.4,
+   "checks": {
+    "fixed_tokens_differ_from_paper_text": 0,
+    "fixed_text_mismatch": 0,
+    "recursive_text_mismatch": 0
+   }
+  },
+  "agentic_subset": {
+   "collection": "qasper_train_qwen3_06b_agentic_subset",
+   "num_questions": 155,
+   "search_seconds": 3.4,
+   "checks": {
+    "fixed_tokens_differ_from_paper_text": 0,
+    "fixed_text_mismatch": 0,
+    "recursive_text_mismatch": 0
+   }
+  }
+ }
+}

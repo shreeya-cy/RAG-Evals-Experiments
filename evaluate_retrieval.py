@@ -9,12 +9,13 @@ unit counts with its truncated span). Gold spans are character offsets in paper_
 - mrr: 1 / rank of the first unit overlapping any gold paragraph by >= 1 character, else 0.
 - tokens_to_first_hit: tokens in the retrieved list before the first overlapping unit.
 """
+import argparse
 import json
 import statistics as st
 from pathlib import Path
 
 import config
-from retrieve import STRATEGIES
+from embedding import add_model_arg
 
 
 def merge(spans: list[list[int]]) -> list[list[int]]:
@@ -88,11 +89,14 @@ def aggregate(rows: list[dict]) -> dict:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    add_model_arg(parser)
+    spec = config.EMBEDDING_MODELS[parser.parse_args().model]
     items = {i["question_id"]: i for i in json.loads((Path(config.EVAL_DIR) / "eval_set.json").read_text())}
     results, per_question = {}, {}
-    for strategy, collection in STRATEGIES.items():
+    for strategy, collection in spec["collections"].items():
         rows = []
-        for line in open(Path(config.RETRIEVAL_DIR) / f"{collection}.jsonl"):
+        for line in open(Path(spec["retrieval_dir"]) / f"{collection}.jsonl"):
             r = json.loads(line)
             row = score_question(r["retrieved"], items[r["question_id"]])
             row["in_agentic_subset"] = items[r["question_id"]]["in_agentic_subset"]
@@ -103,7 +107,7 @@ def main() -> None:
         if strategy != "agentic_subset":  # same 155 questions for a like-for-like comparison with agentic
             results[strategy]["agentic_subset_questions"] = aggregate(subset)
 
-    out = Path(config.METRICS_DIR)
+    out = Path(spec["metrics_dir"])
     out.mkdir(parents=True, exist_ok=True)
     report = {
         "token_budget": config.TOKEN_BUDGET,

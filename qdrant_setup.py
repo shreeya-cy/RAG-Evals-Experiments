@@ -13,7 +13,10 @@ def get_client() -> QdrantClient:
 
 
 def setup_collection(
-    client: QdrantClient, name: str = config.COLLECTION_NAME, recreate: bool = False
+    client: QdrantClient,
+    name: str = config.COLLECTION_NAME,
+    recreate: bool = False,
+    vector_size: int = config.VECTOR_SIZE,
 ) -> None:
     exists = client.collection_exists(name)
     if exists and recreate:
@@ -25,7 +28,7 @@ def setup_collection(
     client.create_collection(
         collection_name=name,
         vectors_config=models.VectorParams(
-            size=config.VECTOR_SIZE, distance=models.Distance.COSINE
+            size=vector_size, distance=models.Distance.COSINE
         ),
     )
     for field in ("paper_id", "title", "chunk_type", "section_name"):
@@ -56,5 +59,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--name", default=config.COLLECTION_NAME)
     parser.add_argument("--recreate", action="store_true", help="drop and recreate")
+    parser.add_argument("--vector-size", type=int, default=config.VECTOR_SIZE)
     args = parser.parse_args()
-    setup_collection(get_client(), name=args.name, recreate=args.recreate)
+    setup_collection(get_client(), name=args.name, recreate=args.recreate, vector_size=args.vector_size)
